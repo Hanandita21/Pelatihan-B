@@ -39,6 +39,15 @@ Route::middleware(['auth', 'verified']) -> group(function(){
 
     //menyimpan data
     Route::post('/post', [PostController::class, 'simpan'])->name('post.simpan');
+
+    //menampilkkan edit data
+    Route::get('/post/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
+
+    //update data
+    Route::put('/post/{id}', [PostController::class, 'update'])->name('post.update');
+
+    //delete data
+    Route::delete('/post/{id}', [PostController::class,'hapus'])->name('post.hapus');
 });
 
 require __DIR__.'/auth.php';

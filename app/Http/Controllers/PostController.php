@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -27,8 +28,12 @@ class PostController extends Controller
     {
         //validasi
         $this->validate($request, [
-            'judul' => 'required',
+            'judul' => 'required|min:3',
             'deskripsi' => 'required',
+        ],[
+            'judul.required' => 'Judul harus diisi',
+            'judul.min' => 'Judul minimal 3 karakter',
+            'deskrpsi.required' => 'Deskripsi harus diisi'
         ]);
 
         //query simpan
@@ -37,8 +42,44 @@ class PostController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
-        return redirect()->route('post.tampil')->with('success', 'Berhasil menambahkan data post');
+        return redirect()->route('post.tampil')->with('success', 'Data berhasil disimpan');
     }
 
-    //delete data post
+    //menampilkan form edit
+    public function edit($id)
+    {
+        //querry gt id
+        $data = Post::findOrFail($id);
+
+        return view('post.edit', compact('data'));
+    }
+
+    //mengupdate data
+    public function update(Request $request, $id)
+    {
+         //validasi
+         $this->validate($request, [
+            'judul' => 'required',
+            'deskripsi' => 'required',
+        ]);
+
+        $data = Post::findOrFail($id);
+
+        //query simpan
+        $data->update([
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+        ]);
+
+        return redirect()->route('post.tampil')->with('success', 'Data berhasil diupdate');
+    }
+
+    //hapus data
+    public function hapus($id)
+    {
+        $data = Post::findOrFail($id);
+        $data->delete();
+
+        return redirect()->route('post.tampil')->with('success', 'Data berhasil dihapus');
+    }
 }
